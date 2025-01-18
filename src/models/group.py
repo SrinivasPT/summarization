@@ -1,11 +1,15 @@
+from pydantic import BaseModel, Field
 from typing import List
-from pydantic import BaseModel
 
 
 class Group(BaseModel):
-    group_name: str
-    citation_rowid_list: List[int]
+    """Represents a group of citations."""
+
+    group_name: str = Field(description="The name of the group")
+    citation_rowid_list: List[int] = Field(
+        description="List of citation rowid in this group"
+    )
 
 
 class GroupList(BaseModel):
-    group_list: List[Group]
+    group_list: List[Group] = Field(description="List of groups")

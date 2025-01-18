@@ -1,22 +1,14 @@
+from prompts.summarization_prompt import get_summarization_prompt
 from state import State
-from models.summary import Summary
+from models.summary import SummaryList
+from utils.llm_utils import structured_llm
 
 
 def summarize_groups(state: State) -> State:
-    summaries = []
+    prompt = get_summarization_prompt(state.groups, state.citations)
 
-    for group in state.groups:
-        # Example: Call LLM to generate summary (replace with actual LLM call)
-        llm_output = {
-            "group_id": group.group_name,
-            "group_summary": f"Summary for {group.group_name}",
-            "state_list": ["state1", "state2"],  # Example additional state
-        }
-
-        # Create summary and add to state
-        summary = Summary(**llm_output)
-        summaries.append(summary)
+    llm_response = structured_llm(prompt, response_model=SummaryList)
 
     # Update state with summaries
-    state.summaries = summaries
+    state.summaries = llm_response
     return state

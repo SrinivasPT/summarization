@@ -1,12 +1,16 @@
+from pydantic import BaseModel, Field
 from typing import List
-from pydantic import BaseModel
 
 
 class Summary(BaseModel):
-    group_id: str
-    group_summary: str
-    state_list: List[str]  # Additional state information if needed
+    """Represents a summary of a group of citations."""
+
+    group_id: str = Field(description="The ID of the group being summarized")
+    group_summary: str = Field(description="The summary of the group")
+    state_list: List[str] = Field(
+        description="Additional state information for the group"
+    )
 
 
 class SummaryList(BaseModel):
-    summary_list: List[Summary]
+    summary_list: List[Summary] = Field(description="List of summaries")
