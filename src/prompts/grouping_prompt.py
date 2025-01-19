@@ -5,7 +5,9 @@ from models.citation import Citation
 
 def get_grouping_prompt(citations: List[Citation]) -> str:
 
-    citations_str = json.dumps([citation.to_dict() for citation in citations], indent=4)
+    citations_str = json.dumps(
+        [citation.model_dump() for citation in citations], indent=4
+    )
 
     prompt = f""" 
 **Task**: You are a legal compliance expert. Your task is to group the 
@@ -55,4 +57,7 @@ is to mirror how a human legal expert would combine or separate them.
 --------------------------------------------
 
     """
+
+    print(prompt.strip())
+
     return prompt.strip()

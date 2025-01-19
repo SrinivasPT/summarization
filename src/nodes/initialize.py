@@ -3,9 +3,11 @@ import os
 from typing import List
 from models.citation import Citation
 from state import State
+from utils.logger import logger
 
 
 def initialize(mcr_id: str) -> State:
+    logger.log(f"Initializing state for MCR ID: {mcr_id}")
     # Get absolute path to data directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(os.path.dirname(current_dir))

@@ -1,8 +1,10 @@
 import os
+import json
 from typing import Type
 from pydantic import BaseModel
 from openai import OpenAI
 from dotenv import load_dotenv
+from .logger import logger
 
 # Load environment variables
 load_dotenv()
@@ -26,6 +28,8 @@ def structured_llm(
         BaseModel: The LLM's response parsed into the Pydantic model.
     """
     try:
+        logger.log_llm_prompt(f"Sending prompt to LLM: {prompt}")
+
         # Define the function schema for structured output
         function_schema = {
             "name": "format_response",
@@ -45,8 +49,14 @@ def structured_llm(
         # Extract the function arguments from the response
         function_args = response.choices[0].message.function_call.arguments
 
-        # Parse the arguments into the Pydantic model
-        return response_model.model_validate_json(function_args)
+        args_dict = json.loads(function_args)  # Convert JSON string to Python dict
+
+        # Validate using the simpler model_validate method
+        parsed_response = response_model.model_validate(args_dict)
+
+        logger.log_llm_response(f"Received structured response: {parsed_response}")
+        return parsed_response
+
     except Exception as e:
-        print(f"Error calling OpenAI API: {e}")
+        logger.log(f"Error in structured_llm: {str(e)}")
         raise
