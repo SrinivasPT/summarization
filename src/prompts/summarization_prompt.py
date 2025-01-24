@@ -1,6 +1,6 @@
 import json
 from typing import List
-from models.group import Group
+from models.citation_group import CitationGroup
 from models.citation import Citation
 
 

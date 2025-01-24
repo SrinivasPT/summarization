@@ -13,9 +13,7 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def structured_llm(
-    prompt: str, response_model: Type[BaseModel], model: str = "gpt-4o-mini"
-) -> BaseModel:
+def structured_llm(prompt: str, response_model: Type[BaseModel], model: str = "gpt-4o-mini", temperature: float = 1) -> BaseModel:
     """
     Calls the OpenAI API and returns the response structured according to the Pydantic model.
 
@@ -43,16 +41,14 @@ def structured_llm(
             messages=[{"role": "user", "content": prompt}],
             functions=[function_schema],
             function_call={"name": "format_response"},
-            temperature=0,
+            temperature=temperature,
         )
 
         # Extract the function arguments from the response
         function_args = response.choices[0].message.function_call.arguments
 
-        args_dict = json.loads(function_args)  # Convert JSON string to Python dict
-
-        # Validate using the simpler model_validate method
-        parsed_response = response_model.model_validate(args_dict)
+        # Parse directly from JSON string
+        parsed_response = response_model.model_validate_json(function_args)
 
         logger.log_llm_response(f"Received structured response: {parsed_response}")
         return parsed_response

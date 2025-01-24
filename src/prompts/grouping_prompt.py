@@ -1,53 +1,33 @@
 import json
 from typing import List
-from models.citation import Citation
+from models.regulatory_info import RegulatoryInfo
 
 
-def get_grouping_prompt(citations: List[Citation]) -> str:
-
-    citations_str = json.dumps(
-        [citation.model_dump() for citation in citations], indent=4
-    )
+def get_grouping_prompt(citations: List[RegulatoryInfo]) -> str:
+    citations_str = json.dumps([citation.model_dump() for citation in citations], indent=4)
 
     prompt = f""" 
-**Task**: You are a legal compliance expert. Your task is to group the 
-following legal citations based on their compliance obligations. The goal 
-is to mirror how a human legal expert would combine or separate them.
+You are tasked with grouping regulatory citations (including U.S. federal and state laws, as well as internal regulations) 
+into Citation Groups. The grouping must follow the rules outlined below to ensure clarity, consistency, and compliance alignment.
 
---------------------------------------------
+#### Rules for Grouping:
+1. **Mutual Exclusivity**:
+   - Each citation must belong to only one Citation Group.
+   - No citation can appear in multiple Citation Groups.
 
-**Rules for Grouping Citations**:
-
-1. **Combine Citations with Identical or Similar Compliance Obligations**:
-   - If multiple citations (even from different jurisdictions) require 
-     the **same operational steps**, impose the **same penalties**, or 
-     can be satisfied by **one internal compliance procedure**, group 
-     them together.
-   - *Example*: If two statutes both say “financial institutions must 
-     not disclose to an account holder that their name was given to the 
-     government” and impose the **same fines** for violations, they 
-     should be combined—even if one is from Massachusetts and the other 
-     is from Hawaii.
-
-2. **Keep Separate Groups for Distinct Compliance Requirements**:
-   - If citations address the **same subject matter** but reference 
-     **different processes**, **penalty structures**, or **legal 
-     frameworks**, they should go in separate groups.
-   - *Example*: If a statute requires **additional disclosures** or 
-     places **different liabilities** on the institution, it should be 
-     in a separate group.
-
-3. **Provide a Brief Explanation for Each Group**:
-   - State the **common compliance function** that unites the citations 
-     in that group (e.g., “non‑disclosure of taxpayer info to the 
-     account holder”).
-   - If you split citations, briefly explain why (e.g., “Kentucky’s 
-     statutes have a different fee/penalty structure from 
-     Massachusetts/Hawaii”).
-
-4. **Ensure One Citation Appears in Only One Group**:
-   - Each citation should belong to **only one group**. Do not duplicate 
-     citations across groups.
+2. **Primary Grouping Criteria**:
+	- Group citations primarily by **shared functional requirements** and **thematic consistency**. The goal is to create groups 
+  that focus on the **core feature or requirement**, not jurisdictional differences.
+	- Consider grouping based on penalties, enforcement mechanisms, or exceptions **only when they differ significantly and 
+  materially affect compliance**.
+   
+3. **Handling Jurisdictional Differences**:
+	- Combine citations across jurisdictions when the functional requirements and penalties are **reasonably similar**, 
+  unless doing so would create confusion or conflict.
+	
+4. **Conflict Resolution**:	
+	- Focus on high-level requirements over minor jurisdictional nuances.
+	- Similar penalties and enforcement mechanisms should be grouped, even if they occur in different states.
 
 --------------------------------------------
 

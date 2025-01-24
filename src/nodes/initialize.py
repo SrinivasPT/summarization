@@ -21,8 +21,8 @@ def initialize(mcr_id: str) -> State:
     citations: List[Citation] = []
     for item in data:
         citation = Citation(
-            rowid=item["rowid"],
-            issuing_authority=item["issuing_authority"],
+            citation_id=item["citation_id"],
+            citation_issuing_authority=item["citation_issuing_authority"],
             citation_number=item["citation_number"],
             citation_text=item["citation_text"],
         )
