@@ -2,80 +2,44 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
-class TemporalContext(BaseModel):
-    effective_date: Optional[str] = Field(
-        None, description="The effective date of the regulation, e.g., 'YYYY-MM-DD' or 'N/A' if not applicable."
-    )
-    expiration_date: Optional[str] = Field(
-        None, description="The expiration date of the regulation, e.g., 'YYYY-MM-DD' or 'N/A' if not applicable."
-    )
+class PenaltyConditions(BaseModel):
+    penalty_amount: Optional[str] = Field(None, description="Monetary penalty amount per violation")
+    enforcement_type: Optional[str] = Field(None, description="Type of enforcement action (e.g., 'Civil', 'Criminal', 'Administrative')")
 
 
-class Attributes(BaseModel):
-    Functional_Requirement: Optional[str] = Field(
-        None, description="The functional requirement imposed by the regulation, e.g., 'Disclosure restriction'."
+class ComplianceAttributes(BaseModel):
+    functional_requirement: str = Field(
+        ...,
+        description="Core regulatory obligation (e.g., 'Negative Reporting', 'Examination Response')",
+        example="Negative Reporting",
     )
-    Applicable_Entity: Optional[str] = Field(
-        None, description="The type of entity to which the regulation applies, e.g., 'Delinquent taxpayer or debtor'."
-    )
-    Action_Type: Optional[str] = Field(
-        None, description="The type of action required or restricted by the regulation, e.g., 'Notification and withholding'."
-    )
-    Penalty_Exception_Conditions: Optional[str] = Field(
+    jurisdiction: str = Field(..., description="Geographic/legal domain of enforcement (e.g., 'IL', 'NY')", example="Illinois")
+    applicable_entities: List[str] = Field(..., description="Entity types subject to regulation", example=["Business Associations"])
+    risk_level: str = Field(..., description="Risk level (High, Medium, Low)", example="Medium")
+    penalty_conditions: Optional[PenaltyConditions] = Field(None, description="Enforcement mechanisms and exceptions")
+    penalty_conditions_nuances: Optional[List[str]] = Field(None, description="List of penalty-related nuances")
+    procedural_nuances: Optional[List[str]] = Field(
         None,
-        description="Details of any penalties, exceptions, or conditions related to the regulation, e.g., 'No liability for non-disclosure'.",
+        description="List of procedural requirements or nuances as strings",
     )
-    Regulatory_Source: Optional[str] = Field(None, description="The source of the regulation, e.g., 'Statutory', 'Administrative', etc.")
-    Temporal_Context: Optional[TemporalContext] = Field(
-        None, description="The time-related context of the regulation, including effective and expiration dates."
+    jurisdictional_nuances: Optional[List[str]] = Field(
+        None,
+        description="List of jurisdictional variations or requirements as strings",
     )
-    Industry_Product_Applicability: Optional[str] = Field(
-        None, description="The industries or products to which the regulation applies, e.g., 'General financial services'."
+    compliance_frequency: Optional[str] = Field(
+        None,
+        description="Primary compliance frequency (e.g., 'Annually', 'Quarterly', 'Per Report')",
     )
-    Risk_Level: Optional[str] = Field(
-        None, description="The level of risk associated with non-compliance, e.g., 'Low', 'Medium', or 'High'."
-    )
-    Compliance_Effort: Optional[str] = Field(
-        None, description="The effort required to comply with the regulation, e.g., 'Low', 'Medium', or 'High'."
-    )
-    Related_Citations: Optional[List[str]] = Field(None, description="A list of related citations or regulations, if any.")
-    Exemptions: Optional[str] = Field(None, description="Details of any exemptions to the regulation, e.g., 'N/A' if no exemptions apply.")
-    Citation_Context: Optional[str] = Field(
-        None, description="The context in which the citation is relevant, e.g., 'Disclosure of delinquent taxpayer information'."
-    )
-    Penalty_Details: Optional[str] = Field(
-        None, description="Details of penalties for violating the regulation, e.g., 'No penalty specified for disclosure violations'."
-    )
-    Frequency_of_Compliance_Action: Optional[str] = Field(
-        None, description="How often compliance actions are required, e.g., 'Compliance required per information request'."
-    )
-    Interaction_with_Other_Laws: Optional[str] = Field(
-        None, description="How the regulation interacts with other laws, e.g., 'Must align with federal privacy laws'."
-    )
-    Applicability_Exceptions: Optional[str] = Field(
-        None, description="Any exceptions to the applicability of the regulation, e.g., 'N/A' if no exceptions apply."
-    )
-    Risk_of_Non_Compliance: Optional[str] = Field(
-        None, description="The risk level associated with non-compliance, e.g., 'Medium due to legal obligations'."
-    )
-    Affected_Stakeholders: Optional[str] = Field(
-        None, description="The stakeholders affected by the regulation, e.g., 'Financial institutions and account holders'."
-    )
-    Data_Sensitivity: Optional[str] = Field(
-        None, description="The sensitivity level of the data covered by the regulation, e.g., 'Moderate sensitivity: taxpayer information'."
+    compliance_frequency_nuances: Optional[List[str]] = Field(
+        None,
+        description="List of nuances related to compliance frequency (e.g., deadlines, exceptions, variations)",
     )
 
 
 class RegulatoryInfo(BaseModel):
-    citation_id: Optional[int] = Field(None, description="A unique identifier for the citation.")
-    citation_number: Optional[str] = Field(None, description="The legal citation number, e.g., 'Ky. Rev. Stat. § 131.676(1)'.")
-    issuing_authority: Optional[str] = Field(
-        None, description="The authority or entity that issued the regulation, e.g., 'Kentucky Government'."
-    )
-    summary: Optional[str] = Field(None, description="A summary of the regulation's requirements or restrictions.")
-    attributes: Optional[Attributes] = Field(
-        None, description="The attributes providing detailed context and requirements of the regulation."
-    )
+    citation_number: str = Field(..., description="The legal citation number, e.g., '765 III. Comp. Stat. Ann. 1026/15-401(d)'.")
+    summary: str = Field(..., description="A summary of the regulation's requirements or restrictions.")
+    compliance_attributes: ComplianceAttributes = Field(..., description="Structured compliance implementation metadata")
 
 
 class RegulatoryInfoResponse(BaseModel):

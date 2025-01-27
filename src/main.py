@@ -2,7 +2,7 @@ from graph import create_graph
 
 
 def main():
-    graph = create_graph("EDGE1008777")
+    graph = create_graph("EDGE1004440")
     final_output = graph()
 
     # Print the final output

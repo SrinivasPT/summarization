@@ -8,12 +8,8 @@ def get_regulatory_info_prompt(citations: List[Citation]) -> str:
     citations_str = json.dumps([citation.model_dump() for citation in citations], indent=4)
 
     prompt = f"""
-Given the citations: generate the following details for the RegulatoryInfo class:
-- Citation number
-- Issuing authority
-- Summary
-- IsBad
-- Attributes including Functional Requirement, Applicable Entity, Action Type, etc.
+Given the citations, extract regulatory information from the following text. Include detailed nuances 
+such as compliance frequency, procedural requirements, and jurisdictional variations.
 
 **Citations**:
 {citations_str}

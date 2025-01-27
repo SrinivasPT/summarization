@@ -22,7 +22,7 @@ def initialize(mcr_id: str) -> State:
     for item in data:
         citation = Citation(
             citation_id=item["citation_id"],
-            citation_issuing_authority=item["citation_issuing_authority"],
+            citation_issuing_authority=item.get("citation_issuing_authority", ""),
             citation_number=item["citation_number"],
             citation_text=item["citation_text"],
         )

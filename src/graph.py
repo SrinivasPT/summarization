@@ -17,10 +17,11 @@ def create_graph(mcr_id: str):
         state = group_citations(state)
 
         # Summarize groups
-        state = summarize_groups(state)
+        # state = summarize_groups(state)
 
         # Prepare final output
         final_output = finalize(state)
         return final_output
+        # return state
 
     return graph
