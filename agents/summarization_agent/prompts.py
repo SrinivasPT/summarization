@@ -1,15 +1,17 @@
-import json
-from typing import List
-from models.citation_group import CitationGroup
-from models.citation import Citation
+from models import CitationGroup
+from pydantic import BaseModel
+from utils import logger
 
 
-def get_summarization_prompt(group_name: str, citations: List[Citation]) -> str:
-    citations_str = json.dumps([c.model_dump() for c in citations], indent=4)
+def get_prompt(group: CitationGroup) -> str:
+    if not isinstance(group, BaseModel):
+        raise TypeError("Input must be a Pydantic model")
+
+    group_citations_str = group.model_dump()
 
     prompt = f"""
 You are a legal compliance expert. Your task is to generate a detailed, legally accurate, 
-and actionable compliance summary for the group "{group_name}" based on the provided legal citations. 
+and actionable compliance summary for the group "{group.citation_group_name}" based on the provided legal citations. 
 This summary must fully reflect legal obligations with precision, covering all conditions, 
 exceptions, and nuances necessary for regulatory compliance.
 
@@ -91,13 +93,12 @@ By incorporating these refinements, the prompt will generate compliance summarie
 with legal standards and provide a complete, accurate representation of the cited legal obligations.
 
 --------------------------------------------
-Group: {group_name}
-Citations:
+**Citations Group Name**: {group.citation_group_name}
 
-{citations_str}
+{group_citations_str}
 --------------------------------------------
     """
 
-    print(prompt.strip())
+    logger.log(prompt.strip())
 
     return prompt.strip()

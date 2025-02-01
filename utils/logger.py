@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)
 
 class Logger:
     def __init__(self):
-        self.log_dir = Path(__file__).parent.parent.parent / "logs"
+        self.log_dir = Path(__file__).parent.parent / "logs"
         self.log_dir.mkdir(exist_ok=True)
 
         # Setup llm logger
@@ -31,9 +31,7 @@ class Logger:
         self.app_logger.propagate = False
 
         # Add file handler with UTF-8 encoding
-        app_handler = logging.FileHandler(
-            self.log_dir / "application.log", encoding="utf-8"
-        )
+        app_handler = logging.FileHandler(self.log_dir / "application.log", encoding="utf-8")
         app_handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
         self.app_logger.addHandler(app_handler)
 

@@ -1,5 +1,4 @@
 import os
-import json
 from typing import Type
 from pydantic import BaseModel
 from openai import OpenAI
