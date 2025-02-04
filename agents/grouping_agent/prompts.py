@@ -69,7 +69,7 @@ For each top-level category, create **subgroups** based on:
 ---
 
 ### Objective:
-Create a **hierarchical structure of Citation Groups** that emphasizes **functional alignment**, **risk prioritization**, and **separation of citations with significant nuances or unique requirements** for efficient compliance management.
+Create a **hierarchical structure of Citation Groups** that emphasizes **functional alignment**, **risk prioritization**, and **separation of citations with significant nuances or unique requirements** for efficient compliance management, **with out repeating citations** across different groups.
 
 ---
 
