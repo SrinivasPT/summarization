@@ -1,3 +1,3 @@
-from .logic import process_citation_groups
+from .logic import generate_summary_for_all_group
 
-__all__ = ["process_citation_groups"]
+__all__ = ["generate_summary_for_all_group", "process_single_group"]

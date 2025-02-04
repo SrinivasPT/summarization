@@ -22,7 +22,8 @@ def structured_llm(prompt: str, response_model: Type[BaseModel], model: str = "g
         model (str): The OpenAI model to use (default: "gpt-4").
 
     Returns:
-        BaseModel: The LLM's response parsed into the Pydantic model.
+        BaseModel: A Pydantic model instance containing the structured response,
+                  not a dict or JSON string.
     """
     try:
         logger.log_llm_prompt(f"Sending prompt to LLM: {prompt}")
@@ -46,8 +47,8 @@ def structured_llm(prompt: str, response_model: Type[BaseModel], model: str = "g
         # Extract the function arguments from the response
         function_args = response.choices[0].message.function_call.arguments
 
-        # Parse directly from JSON string
-        parsed_response = response_model.model_validate_json(function_args)
+        # Parse JSON string into a Pydantic model instance
+        parsed_response: BaseModel = response_model.model_validate_json(function_args)
 
         logger.log_llm_response(f"Received structured response: {parsed_response}")
         return parsed_response

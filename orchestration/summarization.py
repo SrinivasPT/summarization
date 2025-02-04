@@ -2,7 +2,7 @@ import os
 import json
 from typing import List
 
-from agents.summarization_agent import process_citation_groups
+from agents.summarization_agent import generate_summary_for_all_group
 from models import CitationGroup, GroupSummaryList
 from utils import logger
 
@@ -14,11 +14,14 @@ def orchestrate_summarization(input_id: str):
     if citation_group_list:
         # Invoke the agent with the citation group list
         logger.log("Agent invoked with the following citation groups:")
-        summaries: GroupSummaryList = process_citation_groups(citation_group_list)
+        summaries: GroupSummaryList = generate_summary_for_all_group(citation_group_list)
         return summaries
     else:
         logger.log("No citation groups found.")
         return []
+
+
+# def read_citations(input_id: str) -> List[Citation]:
 
 
 def read_citation_group_list(input_id) -> List[CitationGroup]:

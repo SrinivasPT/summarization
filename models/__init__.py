@@ -1,3 +1,21 @@
-from .model import CitationGroupAttributes, Citation, CitationGroupSummary, GroupSummaryList, CitationGroup
+from .model import (
+    CitationGroupAttributes,
+    CitationGroup,
+    CitationGroupSummary,
+    GroupSummaryList,
+    CitationGroup,
+    CitationWithAttributes,
+    CitationWithAttributesList,
+    CitationGroupList,
+)
 
-__all__ = ["CitationGroupAttributes", "Citation", "CitationGroupSummary", "GroupSummaryList", "CitationGroup"]
+__all__ = [
+    "CitationGroupAttributes",
+    "CitationGroup",
+    "CitationGroupSummary",
+    "GroupSummaryList",
+    "CitationGroup",
+    "CitationWithAttributes",
+    "CitationWithAttributesList",
+    "CitationGroupList",
+]

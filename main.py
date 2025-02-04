@@ -1,6 +1,7 @@
 from typing import Optional
 import sys
 
+from orchestration.attributes import orchestrate_attributes_extraction
 from orchestration.summarization import orchestrate_summarization
 from utils import logger
 
@@ -12,6 +13,11 @@ def main(input_id: str, operation: Optional[str] = ""):
             logger.log("Performing summarization operation...")
             result = orchestrate_summarization(input_id)
             return result
+
+        elif operation.lower() == "attributes":
+            logger.log("Performing attributes extraction operation...")
+            result = orchestrate_attributes_extraction(input_id)
+            return []
 
         return []  # Return empty list for unknown operations
 
