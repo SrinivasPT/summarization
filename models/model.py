@@ -70,27 +70,12 @@ class CitationWithAttributesList(BaseModel):
     data: List[CitationWithAttributes] = Field(..., description="A list of citations with additional attributes.")
 
 
-# class CitationGroupAttributes(BaseModel):
-#     functional_requirement: str = Field(..., description="The functional requirement for the group (e.g., 'Negative Reporting').")
-#     risk_level: str = Field(..., description="The risk level associated with the group (e.g., 'Medium-Risk').")
-#     penalty_details: str = Field(
-#         ..., description="Details about penalties or enforcement actions (e.g., 'Not specified, Administrative enforcement')."
-#     )
-#     frequency: str = Field(..., description="The frequency at which the requirement must be fulfilled (e.g., 'Annual').")
-#     automation_level: str = Field(
-#         ..., description="The level of automation required for compliance (e.g., 'Semi-automated (except Ohio, which is Manual)')."
-#     )
-
-
 class CitationGroup(BaseModel):
     citation_group_id: int = Field(..., description="A unique identifier for the group of citations.")
     citation_group_name: str = Field(
         ..., description="The name of the group, describing its theme or category (e.g., 'Medium-Risk Negative Reporting (General)')."
     )
-    citations: List[int] = Field(..., description="A list of citation ids belonging to this group.")
-    # citation_group_attributes: CitationGroupAttributes = Field(
-    #     ..., description="Attributes specific to the group, such as functional requirements, penalties, frequency, and automation level."
-    # )
+    citation_ids: List[int] = Field(..., description="A list of citation ids belonging to this group.")
     functional_requirement: str = Field(..., description="The functional requirement for the group (e.g., 'Negative Reporting').")
     risk_level: str = Field(..., description="The risk level associated with the group (e.g., 'Medium-Risk').")
     penalty_details: str = Field(
@@ -106,10 +91,27 @@ class CitationGroupList(BaseModel):
     data: List[CitationGroup] = Field(..., description="A list of citation groups with their respective attributes.")
 
 
+class GenerateSummaryInput(BaseModel):
+    citation_group_id: int = Field(..., description="A unique identifier for the group of citations.")
+    citation_group_name: str = Field(
+        ..., description="The name of the group, describing its theme or category (e.g., 'Medium-Risk Negative Reporting (General)')."
+    )
+    citation_ids: List[int] = Field(..., description="A list of citation ids belonging to this group.")
+    functional_requirement: str = Field(..., description="The functional requirement for the group (e.g., 'Negative Reporting').")
+    risk_level: str = Field(..., description="The risk level associated with the group (e.g., 'Medium-Risk').")
+    penalty_details: str = Field(
+        ..., description="Details about penalties or enforcement actions (e.g., 'Not specified, Administrative enforcement')."
+    )
+    frequency: str = Field(..., description="The frequency at which the requirement must be fulfilled (e.g., 'Annual').")
+    automation_level: str = Field(
+        ..., description="The level of automation required for compliance (e.g., 'Semi-automated (except Ohio, which is Manual)')."
+    )
+    citations: List[Citation] = Field(..., description="A list of citation referenced in the summary.")
+
+
 class CitationGroupSummary(BaseModel):
     citation_group_id: int = Field(..., description="The unique identifier of the group.")
     citation_group_summary: str = Field(..., description="The generated compliance summary for the group.")
-    citation_ids: List[int] = Field(..., description="A list of citation IDs referenced in the summary.")
 
 
 class GroupSummaryList(BaseModel):

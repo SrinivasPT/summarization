@@ -4,6 +4,7 @@ from .model import (
     CitationWithAttributesList,
     CitationGroup,
     CitationGroupList,
+    GenerateSummaryInput,
     CitationGroupSummary,
     GroupSummaryList,
 )
@@ -14,6 +15,7 @@ __all__ = [
     CitationWithAttributesList,
     CitationGroup,
     CitationGroupList,
+    GenerateSummaryInput,
     CitationGroupSummary,
     GroupSummaryList,
 ]

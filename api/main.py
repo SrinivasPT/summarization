@@ -7,6 +7,7 @@ from models import Citation, CitationWithAttributes, CitationGroup, CitationGrou
 from agents.extraction_agent.logic import generate_citation_attributes
 from agents.grouping_agent.logic import generate_citation_groups
 from agents.summarization_agent.logic import generate_summary_for_all_group
+from models.model import GenerateSummaryInput
 
 app = FastAPI(title="Citation Analysis API", description="API for citation extraction, grouping and summarization")
 
@@ -50,7 +51,7 @@ async def group_citations(citations: List[CitationWithAttributes]):
 
 
 @app.post("/generate-summaries", response_model=List[CitationGroupSummary])
-async def generate_summaries(groups: List[CitationGroup]):
+async def generate_summaries(groups: List[GenerateSummaryInput]):
     try:
         summaries = generate_summary_for_all_group(groups)
         return summaries.data
