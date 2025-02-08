@@ -1,13 +1,14 @@
 from typing import List
-from agents.extraction_agent.prompts import get_prompt
+from agents.extraction_agent.prompts import get_messages
 from models import CitationGroup, CitationWithAttributesList
+from models.llm_model import LLMModel
 from utils.llm_utils import structured_llm
 
 
 def generate_citation_attributes(citations: List[CitationGroup]) -> CitationWithAttributesList:
-    prompt = get_prompt(citations)
+    model = LLMModel.GPT4O_MINI
 
-    # Use structured_llm to get formatted response
-    response = structured_llm(prompt=prompt, response_model=CitationWithAttributesList, model="gpt-4o-mini", temperature=0.1)
+    messages = get_messages(citations)
 
+    response = structured_llm(messages=messages, response_model=CitationWithAttributesList, model=model, temperature=0.3)
     return response

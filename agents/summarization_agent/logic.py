@@ -1,20 +1,21 @@
 from typing import List
 from models import CitationGroup, CitationGroupSummary, GroupSummaryList
-from .prompts import get_prompt
+from models.llm_model import LLMModel
+from models.model import GenerateSummaryInput
+from .prompts import get_messages
 from utils import structured_llm, logger
 
 
-def generate_summary_for_single_group(group: CitationGroup) -> CitationGroupSummary:
-    prompt = get_prompt(group)
+def generate_summary_for_single_group(group: GenerateSummaryInput) -> CitationGroupSummary:
+    messages = get_messages(group)
 
-    # Use structured_llm to get formatted response
-    response = structured_llm(prompt=prompt, response_model=CitationGroupSummary, model="gpt-4o-mini", temperature=0.1)
+    # Use structured_llm with messages
+    response = structured_llm(messages=messages, response_model=CitationGroupSummary, model=LLMModel.GPT4O_MINI, temperature=1)
 
-    # The response is already in CitationGroupSummary format
     return response
 
 
-def generate_summary_for_all_group(group_list: List[CitationGroup]) -> GroupSummaryList:
+def generate_summary_for_all_group(group_list: List[GenerateSummaryInput]) -> GroupSummaryList:
     logger.log("Processing citation groups...")
     summaries: List[CitationGroupSummary] = []
 

@@ -1,58 +1,87 @@
-import os
-from typing import Type
+from typing import Type, List
 from pydantic import BaseModel
-from openai import OpenAI
 from dotenv import load_dotenv
+from langchain_fireworks import ChatFireworks
+from ollama import chat
 from .logger import logger
+from models import LLMModel
+import os
+from openai import OpenAI
+from openai.types.chat import ChatCompletionMessageParam
 
 # Load environment variables
 load_dotenv()
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
-def structured_llm(prompt: str, response_model: Type[BaseModel], model: str = "gpt-4o-mini", temperature: float = 1) -> BaseModel:
-    """
-    Calls the OpenAI API and returns the response structured according to the Pydantic model.
-
-    Args:
-        prompt (str): The prompt to send to the LLM.
-        response_model (Type[BaseModel]): The Pydantic model for the structured output.
-        model (str): The OpenAI model to use (default: "gpt-4").
-
-    Returns:
-        BaseModel: A Pydantic model instance containing the structured response,
-                  not a dict or JSON string.
-    """
-    try:
-        logger.log_llm_prompt(f"Sending prompt to LLM: {prompt}")
-
-        # Define the function schema for structured output
-        function_schema = {
-            "name": "format_response",
-            "description": "Format the response according to the specified schema.",
-            "parameters": response_model.model_json_schema(),
-        }
-
-        # Call OpenAI API with function calling
-        response = client.chat.completions.create(
+def handle_ollama_response(
+    messages: List[ChatCompletionMessageParam], model: str, response_model: Type[BaseModel], temperature: float
+) -> BaseModel:
+    return response_model.model_validate_json(
+        chat(
+            messages=messages,
             model=model,
-            messages=[{"role": "user", "content": prompt}],
-            functions=[function_schema],
-            function_call={"name": "format_response"},
+            format=response_model.model_json_schema(),
+            options={"temperature": temperature, "num_predict": 8000},
+        ).message.content
+    )
+
+
+def handle_fireworks_response(
+    messages: List[ChatCompletionMessageParam], model: str, response_model: Type[BaseModel], temperature: float
+) -> BaseModel:
+    return (
+        ChatFireworks(model=model, temperature=temperature, fireworks_api_key=os.getenv("FIREWORKS_API_KEY"), max_tokens=8000)
+        .with_structured_output(response_model)
+        .invoke(messages)
+    )
+
+
+def handle_gpt_response(
+    messages: List[ChatCompletionMessageParam], model: str, response_model: Type[BaseModel], temperature: float
+) -> BaseModel:
+    try:
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        completion = client.beta.chat.completions.parse(
+            model=model,
+            messages=messages,
+            response_format=response_model,
             temperature=temperature,
+            max_tokens=8000,
         )
+        return completion.choices[0].message.parsed
+    except Exception as e:
+        logger.log(f"OpenAI parsing error: {str(e)}")
+        raise
 
-        # Extract the function arguments from the response
-        function_args = response.choices[0].message.function_call.arguments
 
-        # Parse JSON string into a Pydantic model instance
-        parsed_response: BaseModel = response_model.model_validate_json(function_args)
+def structured_llm(
+    messages: List[ChatCompletionMessageParam],
+    response_model: Type[BaseModel],
+    model: LLMModel = LLMModel.GPT4O_MINI,
+    temperature: float = 1,
+) -> BaseModel:
+    try:
+        if not 0 <= temperature <= 2:
+            raise ValueError("Temperature must be between 0 and 2")
 
-        logger.log_llm_response(f"Received structured response: {parsed_response}")
-        return parsed_response
+        # Log messages
+        logger.log("Processing LLM request with messages:")
+        for msg in messages:
+            logger.log(f"Role: {msg['role']}")
+            logger.log(f"Content: {msg['content']}...")  # Log first 500 chars to avoid too verbose logs
+
+        handler_map = {"ollama": handle_ollama_response, "fireworks": handle_fireworks_response, "gpt": handle_gpt_response}
+
+        model_type = next((k for k in handler_map.keys() if getattr(model, f"is_{k}")), None)
+        if not model_type:
+            raise ValueError(f"Unsupported model type: {model}")
+
+        return handler_map[model_type](messages, model.value, response_model, temperature)
 
     except Exception as e:
-        logger.log(f"Error in structured_llm: {str(e)}")
+        logger.log("Error occurred in structured_llm:")
+        logger.log(f"Model: {model.value}")
+        logger.log(f"Temperature: {temperature}")
+        logger.log(f"Response Model: {response_model.__name__}")
+        logger.log(f"Error: {str(e)}")
         raise

@@ -9,6 +9,9 @@ from .model import (
     GroupSummaryList,
 )
 
+from .llm_model import LLMModel
+from enum import Enum
+
 __all__ = [
     Citation,
     CitationWithAttributes,
@@ -18,4 +21,5 @@ __all__ = [
     GenerateSummaryInput,
     CitationGroupSummary,
     GroupSummaryList,
+    LLMModel,
 ]

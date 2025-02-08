@@ -3,11 +3,14 @@ import os
 from typing import List
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel  # Add this import
 from models import Citation, CitationWithAttributes, CitationGroup, CitationGroupSummary
 from agents.extraction_agent.logic import generate_citation_attributes
 from agents.grouping_agent.logic import generate_citation_groups
 from agents.summarization_agent.logic import generate_summary_for_all_group
 from models.model import GenerateSummaryInput
+from models.embedding_model import EmbeddingRequest, EmbeddingResponse
+from utils.embedding_util import generate_embeddings, generate_embeddings_for_objects, add_embeddings_to_objects
 
 app = FastAPI(title="Citation Analysis API", description="API for citation extraction, grouping and summarization")
 
@@ -19,6 +22,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.post("/generate-embeddings", response_model=EmbeddingResponse)
+async def generate_embeddings(request: EmbeddingRequest):
+    try:
+        object_dicts = [obj.model_dump() if isinstance(obj, BaseModel) else obj for obj in request.objects]
+        objects_with_embeddings = add_embeddings_to_objects(object_dicts, request.field_name)
+
+        if not objects_with_embeddings:
+            raise HTTPException(status_code=500, detail="Failed to generate embeddings")
+        return EmbeddingResponse(objects=objects_with_embeddings)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/citations/{id}", response_model=List[Citation])
