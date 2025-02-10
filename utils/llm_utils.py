@@ -21,7 +21,7 @@ def handle_ollama_response(
             messages=messages,
             model=model,
             format=response_model.model_json_schema(),
-            options={"temperature": temperature, "num_predict": 8000},
+            options={"temperature": temperature, "num_predict": 8192},
         ).message.content
     )
 

@@ -30,20 +30,17 @@ def generate_embeddings_for_objects(objects: List[Any], field_name: str) -> List
         return []
 
 
+def get_field_value(obj, field_name):
+    value = obj.get(field_name)
+    if isinstance(value, list):
+        return " ".join(str(item) for item in value)
+    return str(value)
+
+
 def add_embeddings_to_objects(objects: List[Dict], field_name: str) -> List[Dict]:
-    """
-    Generate embeddings for objects and add them as a new field
-
-    Args:
-        objects: List of dictionary objects
-        field_name: Name of the field to generate embeddings for
-
-    Returns:
-        List of dictionaries with embeddings added
-    """
     try:
         # Extract the specified field from each object
-        texts = [obj[field_name] for obj in objects]
+        texts = [get_field_value(obj, field_name) for obj in objects]
         embeddings = generate_embeddings(texts)
 
         # Add embeddings to objects

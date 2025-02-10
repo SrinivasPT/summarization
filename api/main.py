@@ -4,13 +4,15 @@ from typing import List
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel  # Add this import
-from models import Citation, CitationWithAttributes, CitationGroup, CitationGroupSummary
+from models import Citation, CitationWithAttributes, CitationGroupSummary
 from agents.extraction_agent.logic import generate_citation_attributes
 from agents.grouping_agent.logic import generate_citation_groups
 from agents.summarization_agent.logic import generate_summary_for_all_group
+from models.citation_dimensions import CitationDimensions
+from models.citation_group import CitationGrouping
 from models.model import GenerateSummaryInput
 from models.embedding_model import EmbeddingRequest, EmbeddingResponse
-from utils.embedding_util import generate_embeddings, generate_embeddings_for_objects, add_embeddings_to_objects
+from utils.embedding_util import add_embeddings_to_objects
 
 app = FastAPI(title="Citation Analysis API", description="API for citation extraction, grouping and summarization")
 
@@ -48,7 +50,7 @@ async def get_citations(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/extract-citation-attributes", response_model=List[CitationWithAttributes])
+@app.post("/extract-citation-attributes", response_model=List[CitationDimensions])
 async def extract_citations(citations: List[Citation]):
     try:
         citations_with_attributes = generate_citation_attributes(citations)
@@ -57,11 +59,11 @@ async def extract_citations(citations: List[Citation]):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/group-citations", response_model=List[CitationGroup])
-async def group_citations(citations: List[CitationWithAttributes]):
+@app.post("/group-citations", response_model=CitationGrouping)
+async def group_citations(citations: List[CitationDimensions]):
     try:
         groups = generate_citation_groups(citations)
-        return groups.data
+        return groups
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
