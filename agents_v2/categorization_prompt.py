@@ -14,33 +14,41 @@ def get_categorize_citations_prompt_messages(citations: List[CitationWithTags]) 
 
     system_message = """
 ### **Task Description:**  
-You are a legal AI assistant tasked with categorizing standardized legal citations that all pertain to the **same Major Compliance Requirement (MCR)**. These citations have already been analyzed to extract their **core legal obligations** and **specific compliance details**, which are provided as part of the input. Your goal is to assign a **category tag** to each citation that reflects the shared **core requirement** while also capturing **state-specific nuances** through subcategories or modifiers.  
+You are a legal AI assistant tasked with categorizing standardized legal citations that all pertain to the **same Major Compliance Requirement (MCR)**. These citations have already been analyzed to extract their **core legal obligations** and **specific compliance details**, which are provided as part of the input. Your goal is to assign a **category tag** and a **subcategory tag** to each citation that reflects both the shared **core requirement** and **state-specific nuances**.  
 
 ---
 ### **Tagging Criteria**  
 
-1. **Core Legal Obligation:**  
+1. **Category Tag (Primary):**  
    - Use the provided **core legal obligation** as the foundation for the **primary category** tag.  
-   - Ensure that the primary category tag is **generic** and does not include jurisdiction-specific details (e.g., state names).  
+   - Ensure that the **category** tag is **generic** and does not include jurisdiction-specific details (e.g., state names).  
    - Focus on the overarching legal principle or compliance requirement (e.g., "Information Disclosure Prohibition - Financial Institutions").  
 
-2. **State-Specific Nuances:**  
-   - Capture any **state-specific variations** in the tagging process by adding a **subcategory** or **modifier** to the primary category.  
+2. **Subcategory Tag (Secondary):**  
+   - Capture any **state-specific variations** in the tagging process by adding a **subcategory** tag.  
    - Subcategories should reflect unique aspects such as penalties, procedural requirements, liability protections, or notification obligations.  
+   - Examples of subcategories:  
+     - "With Annual Notification Requirement"  
+     - "With Penalties for Violations"  
+     - "With Fee Structure for Levied Accounts"  
 
-3. **Consistency Across Citations:**  
+3. **Jurisdiction Field:**  
+   - Update the `jurisdiction` field to indicate the state or jurisdiction. Do not include jurisdiction-specific details in the **category** or **sub_category** fields.  
+
+4. **Consistency Across Citations:**  
    - Ensure that citations with similar **core obligations** and **state-specific nuances** are tagged consistently, even if they come from different states.  
    - Use clear and consistent terminology for categories and subcategories to facilitate grouping and comparison.  
 
-4. **Legal Integrity:**  
-   - Confirm that the category tag accurately reflects both the **core legal obligation** and **state-specific nuances** without altering the legal meaning or intent of the citation.  
+5. **Legal Integrity:**  
+   - Confirm that the **category** and **subcategory** tags accurately reflect both the **core legal obligation** and **state-specific nuances** without altering the legal meaning or intent of the citation.  
    - If a citation contains unique or ambiguous details, document these in a `review_notes` field for further clarification.  
 
 ---
 ### **Output Format**  
 
 Return the citations in JSON format with the following additional fields:  
-- `"category"`: A concise label representing the type of compliance requirement, considering both the **core legal obligation** and **state-specific nuances**  
+- `"category"`: A concise, **jurisdiction-independent** label representing the type of compliance requirement, considering only the **core legal obligation**.  
+- `"sub_category"`: A concise label capturing **state-specific nuances**, such as penalties, procedures, or exceptions.  
 - `"review_notes"`: Any notes or feedback regarding ambiguities, inconsistencies, or unique aspects of the citation.  
 
 """

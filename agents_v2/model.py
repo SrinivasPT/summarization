@@ -42,6 +42,7 @@ class CitationWithCategory(BaseModel):
     core_legal_obligation: str
     specific_compliance_details: List[str]
     category: str
+    sub_category: str
     review_notes: List[str]
 
 

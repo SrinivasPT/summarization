@@ -15,32 +15,34 @@ def generate_grouping(citations: List[Citation]) -> StandardCitationList:
 
     # Standardize citation text
     messages = get_standardize_citation_messages(citations)
-    response: StandardCitationList = structured_llm(messages=messages, response_model=StandardCitationList, model=model, temperature=1)
+    response: StandardCitationList = structured_llm(messages=messages, response_model=StandardCitationList, model=model, temperature=0.3)
     print_json(response.citations)
 
     # # Review the Standardize citation text
     # messages = get_standardize_citation_review_messages(response.citations)
-    # response: StandardCitationList = structured_llm(messages=messages, response_model=StandardCitationList, model=model, temperature=1)
+    # response: StandardCitationList = structured_llm(messages=messages, response_model=StandardCitationList, model=model, temperature=0.3)
     # print_json(response.citations)
 
     # Tag citations with themes
     messages = get_tag_citation_prompt_messages(response.citations)
-    response: StandardCitationList = structured_llm(messages=messages, response_model=CitationWithTagsList, model=model, temperature=1)
+    response: StandardCitationList = structured_llm(messages=messages, response_model=CitationWithTagsList, model=model, temperature=0.3)
     print_json(response.citations)
 
     # # Review Tag citations with themes
     # messages = get_tag_citation_review_prompt_messages(response.citations)
-    # response: StandardCitationList = structured_llm(messages=messages, response_model=CitationWithTagsList, model=model, temperature=1)
+    # response: StandardCitationList = structured_llm(messages=messages, response_model=CitationWithTagsList, model=model, temperature=0.3)
     # print_json(response.citations)
 
     # Categorize citations based on core_legal_obligation and specific_compliance_details
     messages = get_categorize_citations_prompt_messages(response.citations)
-    response: StandardCitationList = structured_llm(messages=messages, response_model=CitationWithCategoryList, model=model, temperature=1)
+    response: StandardCitationList = structured_llm(
+        messages=messages, response_model=CitationWithCategoryList, model=model, temperature=0.3
+    )
     print_json(response.citations)
 
     # # Review citations categorization based on core_legal_obligation and specific_compliance_details
     # messages = get_categorize_citations_review_prompt_messages(response.citations)
-    # response: StandardCitationList = structured_llm(messages=messages, response_model=CitationWithCategoryList, model=model, temperature=1)
+    # response: StandardCitationList = structured_llm(messages=messages, response_model=CitationWithCategoryList, model=model, temperature=0.3)
     # print_json(response.citations)
 
     return response
