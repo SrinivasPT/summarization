@@ -67,8 +67,8 @@ def structured_llm(
         # Log messages
         logger.log("Processing LLM request with messages:")
         for msg in messages:
-            logger.log(f"Role: {msg['role']}")
-            logger.log(f"Content: {msg['content']}...")  # Log first 500 chars to avoid too verbose logs
+            logger.log_llm_prompt(f"Role: {msg['role']}")
+            logger.log_llm_prompt(f"Content: {msg['content']}...")  # Log first 500 chars to avoid too verbose logs
 
         handler_map = {"ollama": handle_ollama_response, "fireworks": handle_fireworks_response, "gpt": handle_gpt_response}
 

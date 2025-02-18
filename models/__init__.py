@@ -10,9 +10,10 @@ from .model import (
 )
 
 from .citation_dimensions import CitationDimensions, CitationDimensionsList
-from .citation_group import CitationGrouping
+from .citation_group import MajorComplianceRequirement
 from .llm_model import LLMModel
 from enum import Enum
+from .embedding_model import EmbeddingRequest, EmbeddingResponse
 
 __all__ = [
     Citation,
@@ -26,5 +27,6 @@ __all__ = [
     LLMModel,
     CitationDimensions,
     CitationDimensionsList,
-    CitationGrouping,
+    EmbeddingRequest,
+    EmbeddingResponse,
 ]
