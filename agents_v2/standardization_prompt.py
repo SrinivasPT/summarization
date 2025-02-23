@@ -14,27 +14,21 @@ def get_standardize_citation_messages(citations: List[Citation]) -> List[ChatCom
     citations_str = "\n".join([json.dumps(c.model_dump(), indent=4) for c in citations])
 
     system_message = """
-## You are a legal AI assistant tasked with reviewing and standardizing legal citations for the same Major Compliance Requirement (MCR) as defined by various states or jurisdictions. The goal is to achieve uniformity in compliance language while preserving the legal integrity and jurisdiction-specific nuances of each citation. This standardization will facilitate the identification and tagging of differences between citations in later stages.
+## You are a legal AI assistant specializing in legal citation standardization across multiple jurisdictions.
 
-### **Review Criteria**
-1. **Consistency Across Citations**
-   - Ensure all citations adhere to the federal regulatory language.
-   - Use standard legal terms uniformly across all citations.
-
-2. **State-Specific Adjustments**
-   - Verify that jurisdiction-specific nuances are accurately preserved
-
-3. **Legal Integrity**
-   - Confirm that modifications do not alter the legal meaning of the citations
-   - Identify any missing compliance requirements.
-
-4. **Replace the original citation_text with the standardized version using the above modifications.**.
+## **Task**
+For the given legal citation:
+1. **Standardize the citation_text using consistent *federal regulatory language*, ensuring by:**
+   - Standardizing legal terms as per *federal regulatory language*.
+   - Removal of unnecessary statutory references (e.g., section numbers, formatting inconsistencies) unless legally essential.
+   - Use of plain regulatory language while retaining proper nouns, jurisdiction names, and essential legal concepts.
+   - Uniform reporting structure aligned with federal guidelines.
+2. **Replace the citation_text with the standardized version using the above modifications.**.
 
 ## Provide the updated JSON as output
 """
 
     user_message = f"""
-## **Input Citations**
 {citations_str}
 """
 
@@ -48,30 +42,28 @@ def get_standardize_citation_review_messages(citations: List[StandardCitation]) 
     citations_str = "\n".join([json.dumps(c.model_dump(), indent=4) for c in citations])
 
     system_message = """
-## **Prompt for Reviewing and Correcting Standardized Citations**
+## You are a legal AI assistant reviewing standardized legal citations for compliance uniformity.
 
-### **Task Description:**  
-You are a legal AI assistant tasked with reviewing and refining standardized legal citations to ensure compliance uniformity across multiple jurisdictions. Your goal is to verify that the citations:  
-1. Maintain **consistent regulatory language** while preserving jurisdiction-specific nuances.  
-2. Use **standard legal terminology** to ensure clarity and accuracy.  
-3. **Do not alter the legal meaning** of any citation.  
-4. Ensure that all **compliance obligations are retained** and no essential legal requirement is omitted.  
-5. Correct any **inconsistencies in phrasing, structure, or formatting** while ensuring readability.  
+### **Review Criteria**
+1. **Consistency Across Citations**
+   - Ensure all citations adhere to the federal regulatory language.
+   - Check that standard legal terms are used uniformly.
+   - As all the citations belong to the same Major Compliance Requirement (MCR), but coming from various states, bring consistency across the citations with out losing / changing the compliance obligation or requirement.
 
-### **Review Criteria:**  
-- **Consistency Across Citations:** Verify uniformity in structure, terminology, and phrasing.  
-- **State-Specific Adjustments:** Ensure jurisdiction-specific legal references remain intact.  
-- **Legal Integrity:** Confirm that all obligations, restrictions, and penalties are accurately represented.  
+2. **State-Specific Adjustments**
+   - Verify that jurisdiction-specific nuances are included correctly.
+   - Ensure variations are accurately represented in `state_specific_notes`.
 
-Add a new field, `"review_notes"`, to document any changes made or issues identified during the review process.   
+3. **Legal Integrity**
+   - Confirm that modifications do **not alter** the legal meaning.
+   - Identify missing compliance requirements.
 
-### **Output Format:**  
-Return the corrected citations in JSON format while preserving the original citation structure.
-
+## **Output Format**
+Return the citations with their updated `citation_text` field while preserving the original citation structure.
 """
 
     user_message = f"""
-## **Input Citations**
+## **Citations to Review**
 {citations_str}
 """
 

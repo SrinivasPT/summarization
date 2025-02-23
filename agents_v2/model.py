@@ -22,32 +22,25 @@ class StandardCitationList(BaseModel):
 
 class CitationWithTags(BaseModel):
     citation_id: int
-    citation_number: str
-    citation_text: str
     jurisdiction: str
-    core_legal_obligation: str
-    specific_compliance_details: List[str]
-    review_notes: List[str]
+    nuances: List[str]
 
 
 class CitationWithTagsList(BaseModel):
+    core_legal_obligation: str
     citations: List[CitationWithTags]
 
 
-class CitationWithCategory(BaseModel):
-    citation_id: int
-    citation_number: str
-    citation_text: str
-    jurisdiction: str
-    core_legal_obligation: str
-    specific_compliance_details: List[str]
-    category: str
-    sub_category: str
-    review_notes: List[str]
+class CitationGroup(BaseModel):
+    group_name: str
+    description: str
+    justification: str
+    citation_ids: List[int]
 
 
-class CitationWithCategoryList(BaseModel):
-    citations: List[CitationWithCategory]
+class CitationGroupList(BaseModel):
+    mcr_level_group: CitationGroup
+    groups: List[CitationGroup]
 
 
 class MajorComplianceRequirement(BaseModel):

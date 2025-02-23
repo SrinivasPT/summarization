@@ -1,7 +1,7 @@
 import json
 import os
 from typing import List
-from agents_v2.generate_grouping import generate_grouping
+from agents_v2.main import generate_grouping
 from agents_v2.model import Citation
 
 

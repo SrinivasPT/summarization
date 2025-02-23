@@ -13,21 +13,26 @@ def get_tag_citation_prompt_messages(citations: List[StandardCitation]) -> List[
 
     system_message = """
 ### **Task Description:**  
-You are a legal AI assistant tasked with analyzing standardized legal citations that all belong to the same **Major Compliance Requirement (MCR)** but may have jurisdiction-specific nuances. Your goal is to tag each citation with two key attributes:  
+You are a legal AI assistant analyzing standardized legal citations under the same **Major Compliance Requirement (MCR)**. Your goal is to extract two key attributes for each citation:
 
-1. **Core Legal Obligations:** The fundamental legal requirement that is consistent across all jurisdictions.  
-2. **Specific Compliance Details:** The jurisdiction-specific variations, exceptions, penalties, procedures, or conditions related to the citation.  
+1. **core_legal_obligations:** The primary legal requirement common to all jurisdictions.  
+2. **nuances:** Jurisdiction-specific variations (e.g., exceptions, penalties, deadlines, procedures).
 
-Since these citations pertain to the same MCR, ensure that the **core obligation remains consistent** across all citations while accurately reflecting jurisdiction-specific details in the compliance section.
-
-### **Tagging Criteria:**  
-- **Core Legal Obligations:** Identify the primary duty, restriction, or mandate imposed by the citation that aligns with the overarching compliance requirement.  
-- **Specific Compliance Details:** Capture any jurisdictional nuances, including exceptions, penalties, liability protections, and procedural requirements.  
+### **Instructions:**  
+- Identify a **consistent core_legal_obligation** shared by all citations under the MCR.
+- Extract material jurisdiction specific **nuances** that are in addition to the core_legal_obligation, focusing on:  
+  - Exceptions or exemptions  
+  - Penalties or enforcement details  
+  - Procedural requirements (e.g., deadlines, forms)  
+  - Liability protections or special conditions 
+- Standardize the nuances across citations so that similar or identical jurisdiction-specific requirements are identical.
+- Remove the insignificant nuances that do not materially affect legal obligation. 
+---
 
 ### **Output Format:**  
-Return the citations in JSON format with two additional fields:  
+Return the citations in JSON format with two additional fields:
 - `"core_legal_obligations"`: A summary of the fundamental legal requirement that applies uniformly across all jurisdictions.  
-- `"specific_compliance_details"`: A summary of specific jurisdictional conditions, exceptions, penalties, or procedural requirements.  
+- `"nuances"`: A summary of specific jurisdictional conditions, exceptions, penalties, or procedural requirements.  
 
 """
 
@@ -50,7 +55,7 @@ def get_tag_citation_review_prompt_messages(citations: List[CitationWithTags]) -
 You are a legal AI assistant tasked with reviewing and refining the tagging of standardized legal citations that pertain to the same **Major Compliance Requirement (MCR)**. Each citation has been tagged with two key attributes:  
 
 1. **Core Legal Obligations:** The fundamental legal requirement that is consistent across all jurisdictions.  
-2. **Specific Compliance Details:** Jurisdiction-specific variations, including exceptions, penalties, liability protections, procedural requirements, or other unique conditions.  
+2. **nuances:** These are the compliance obligations other than the Core Legal Obligations. These could be jurisdiction-specific variations, including exceptions, penalties, liability protections, procedural requirements, or other unique conditions.  
 
 Your goal is to ensure that the tagging is accurate, consistent, and adheres to the following criteria:  
 
